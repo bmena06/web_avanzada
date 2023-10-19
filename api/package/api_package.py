@@ -25,7 +25,8 @@ def update_package(id):
         data = request.get_json()
         package.date = data['date']
         package.active = data['active']
-        package.compensation = data['compensation']
+        package.amount = data ['amount']
+        package.payment = data ['payment']
         package.update_in_db()
         return {"mensaje": "Paquete actualizado exitosamente"}, 200
     return {"mensaje": "Paquete no encontrado"}, 404
