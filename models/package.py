@@ -6,13 +6,16 @@ class PackageModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date)
     compensation = db.Column(db.DECIMAL(10, 2))
+    active = db.Column(db.Boolean)
+    amount = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
-    def __init__(self, date, compensation, user_id):
+    def __init__(self, date, compensation,active,amount,user_id):
         self.date = date
         self.compensation = compensation
+        self.active = active
+        self.amount = amount
         self.user_id = user_id
-
 
     def save_to_db(self):
         db.session.add(self)
@@ -30,6 +33,8 @@ class PackageModel(db.Model):
             'id': self.id,
             'date': self.date,
             'compensation': self.compensation,
+            'active': self.active,
+            'amount': self.amount,
             'user_id': self.user_id
         }
 
@@ -38,4 +43,4 @@ with app.app_context():
 
 class PackageSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'date','compensation','user_id')
+        fields = ('id', 'date','compensation','active','amount','user_id')
