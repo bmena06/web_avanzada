@@ -15,7 +15,7 @@ class UserModel(db.Model):
         self.password = password
         self.id_rol = id_rol
 
-    def save_to_db(self):
+    def save_to_db(self,password):
         db.session.add(self)
         db.session.commit()
     

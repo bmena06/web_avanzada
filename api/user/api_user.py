@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from models.user import UserModel
 from Config.db import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 user_bp = Blueprint('user', __name__)
 
