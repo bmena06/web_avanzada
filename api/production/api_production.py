@@ -1,14 +1,20 @@
 from flask import Blueprint, request
 from models.production import ProductionModel
 from Config.db import db
+from models.product_logic import create_production_and_package
 
 production_bp = Blueprint('production', __name__)
 
 @production_bp.route('/newproduction', methods=['POST'])
 def create_production():
     data = request.get_json()
-    new_production = ProductionModel(**data)
-    new_production.save_to_db()
+    user_id = data.get('user_id')
+    product_id = data.get('product_id')
+
+    # Utiliza la función create_production_and_package para crear producción y paquete.
+    create_production_and_package(user_id, product_id)
+
+    # La función create_production_and_package se encargará de crear la producción y el paquete según sea necesario.
     return {"mensaje": "Produccion creada exitosamente"}, 201
 
 @production_bp.route('/production/<int:id>', methods=['GET'])

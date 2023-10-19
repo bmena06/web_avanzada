@@ -5,13 +5,13 @@ class PackageModel(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date)
-    active = db.Column(db.Boolean)
-    compesation = db.Column(db.DECIMAL(10, 2))
+    compensation = db.Column(db.DECIMAL(10, 2))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
-    def __init__(self, date, active, compesation):
+    def __init__(self, date, compensation, user_id):
         self.date = date
-        self.active = active
-        self.compensation = compesation
+        self.compensation = compensation
+        self.user_id = user_id
 
 
     def save_to_db(self):
@@ -28,9 +28,9 @@ class PackageModel(db.Model):
     def json(self):
         return {
             'id': self.id,
-            'date': str(self.fecha),
-            'active': self.total,
-            'compesation': self.valor,
+            'date': self.date,
+            'compensation': self.compensation,
+            'user_id': self.user_id
         }
 
 with app.app_context():
@@ -38,4 +38,4 @@ with app.app_context():
 
 class PackageSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'fecha','total','valor','user_id','product_id')
+        fields = ('id', 'date','compensation','user_id')
