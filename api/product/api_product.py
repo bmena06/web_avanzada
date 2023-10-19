@@ -23,8 +23,8 @@ def update_product(id):
     product = ProductModel.query.get(id)
     if product:
         data = request.get_json()
-        product.name = data['nombre']
-        product.compensation = data['compensation']
+        product.name = data['name']
+        product.price = data['price']
         product.update_in_db()
         return {"mensaje": "Producto actualizado exitosamente"}, 200
     return {"mensaje": "Producto no encontrado"}, 404

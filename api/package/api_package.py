@@ -23,8 +23,9 @@ def update_package(id):
     package = PackageModel.query.get(id)
     if package:
         data = request.get_json()
-        package.name = data['nombre']
-        package.email = data['identificacion']
+        package.date = data['date']
+        package.active = data['active']
+        package.compensation = data['compensation']
         package.update_in_db()
         return {"mensaje": "Paquete actualizado exitosamente"}, 200
     return {"mensaje": "Paquete no encontrado"}, 404

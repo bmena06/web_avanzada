@@ -23,7 +23,7 @@ def update_rol(id):
     rol = RolModel.query.get(id)
     if rol:
         data = request.get_json()
-        rol.name = data['nombre']
+        rol.name = data['name']
         rol.compensation = data['compensation']
         rol.update_in_db()
         return {"mensaje": "Rol actualizado exitosamente"}, 200

@@ -23,8 +23,10 @@ def update_user(id):
     user = UserModel.query.get(id)
     if user:
         data = request.get_json()
-        user.name = data['nombre']
-        user.email = data['identificacion']
+        user.name = data['name']
+        user.email = data['email']
+        user.password = data['password']
+        user.id_rol = data['id_rol']
         user.update_in_db()
         return {"mensaje": "Usuario actualizado exitosamente"}, 200
     return {"mensaje": "Usuario no encontrado"}, 404

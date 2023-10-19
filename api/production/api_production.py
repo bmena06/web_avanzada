@@ -23,8 +23,10 @@ def update_production(id):
     production = ProductionModel.query.get(id)
     if production:
         data = request.get_json()
-        production.name = data['nombre']
-        production.email = data['identificacion']
+        production.date = data['date']
+        production.user_id = data['user_id']
+        production.product_id = data['product_id']
+        production.package_id = data['package_id']
         production.update_in_db()
         return {"mensaje": "Produccion actualizado exitosamente"}, 200
     return {"mensaje": "Produccion no encontrada"}, 404
