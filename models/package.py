@@ -1,22 +1,22 @@
 from Config.db import db,app,ma
 
-class PaqueteModel(db.Model):
-    __tablename__ = 'paquete'
+class PackageModel(db.Model):
+    __tablename__ = 'package'
     
     id = db.Column(db.Integer, primary_key=True)
     fecha = db.Column(db.Date)
     total = db.Column(db.Integer)
     valor = db.Column(db.DECIMAL(10, 2))
     
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
-    producto_id = db.Column(db.Integer, db.ForeignKey('producto.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
     
-    def __init__(self, fecha, total, valor, usuario_id, producto_id):
+    def __init__(self, fecha, total, valor, user_id, product_id):
         self.fecha = fecha
         self.total = total
         self.valor = valor
-        self.usuario_id = usuario_id
-        self.producto_id = producto_id
+        self.user_id = user_id
+        self.product_id = product_id
 
     def save_to_db(self):
         db.session.add(self)
@@ -35,13 +35,13 @@ class PaqueteModel(db.Model):
             'fecha': str(self.fecha),
             'total': self.total,
             'valor': float(self.valor),
-            'usuario_id': self.usuario_id,
-            'producto_id': self.producto_id
+            'user_id': self.user_id,
+            'product_id': self.product_id
         }
 
 with app.app_context():
     db.create_all()
 
-class PaqueeteSchema(ma.Schema):
+class PackageSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'fecha','total','valor','usuario_id','producto_id')
+        fields = ('id', 'fecha','total','valor','user_id','product_id')

@@ -1,15 +1,15 @@
 from Config.db import ma, db, app
 
-class ProductoModel(db.Model):
-    __tablename__ = 'producto'
+class ProductModel(db.Model):
+    __tablename__ = 'product'
     
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(255))
-    numero = db.Column(db.Integer)
+    name = db.Column(db.String(30))
+    price = db.Column(db.Integer)
     
-    def __init__(self, nombre, numero):
-        self.nombre = nombre
-        self.numero = numero
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
 
     def save_to_db(self):
         db.session.add(self)
@@ -25,13 +25,13 @@ class ProductoModel(db.Model):
     def json(self):
         return {
             'id': self.id,
-            'nombre': self.nombre,
-            'numero': self.numero
+            'name': self.name,
+            'price': self.price
         }
 
 with app.app_context():
     db.create_all()
 
-class ProductoSchema(ma.Schema):
+class ProductSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'nombre','numero')
+        fields = ('id', 'name','price')
