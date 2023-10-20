@@ -6,7 +6,9 @@ from models.package import PackageModel
 from models.rol import RolModel
 from models.user import UserModel
 
+# Función para crear una producción y gestionar el pago
 def create_production_and_package(user_id, product_id):
+    # Obtener o crear un paquete activo para el usuario
     active_package = PackageModel.query.filter_by(user_id=user_id, active=False).first()
 
     if active_package is None:
@@ -15,33 +17,33 @@ def create_production_and_package(user_id, product_id):
     else:
         package = active_package
 
+    # Crear una nueva producción y asociarla al paquete
     production = ProductionModel(date=datetime.now(), user_id=user_id, product_id=product_id, package_id=package.id)
     production.save_to_db()
 
+    # Actualizar la cantidad de producciones en el paquete
     package.amount = ProductionModel.query.filter_by(user_id=user_id, package_id=package.id).count()
     package.update_in_db()
 
+    # Marcar el paquete como activo si se completa
     if package.amount % 12 == 0:
         package.active = True
         package.update_in_db()
 
-    # Llama a la función para calcular el pago
+    # Calcular el pago y actualizar o crear un registro de pago
     payment_amount = calculate_payment(user_id, product_id)
-
-    # Verifica si ya existe un registro de pago para este usuario y producto
     existing_payment = PaymentModel.query.filter_by(user_id=user_id).first()
     
     if existing_payment:
-        # Si existe, actualiza el monto del pago
         existing_payment.total_payment = payment_amount
         existing_payment.update_in_db()
     else:
-        # Si no existe, crea un nuevo registro de pago
-        payment = PaymentModel(user_id=user_id,total_payment=payment_amount)
+        payment = PaymentModel(user_id=user_id, total_payment=payment_amount)
         payment.save_to_db()
 
     return production
 
+# Función para calcular el pago
 def calculate_payment(user_id, product_id):
     # Obtener la compensación del rol del usuario y el precio del producto
     user = UserModel.query.get(user_id)
@@ -53,10 +55,10 @@ def calculate_payment(user_id, product_id):
     product_compensation = product.price 
 
     # Obtener el número de producciones realizadas por el usuario
-    production_count = ProductionModel.query.filter_by(user_id=user_id, ).count()
+    production_count = ProductionModel.query.filter_by(user_id=user_id).count()
 
-    # Obtener el número de paquetes realizados por el usuario
-    package_count = PackageModel.query.filter_by(user_id=user_id,active=True).count()
+    # Obtener el número de paquetes activos realizados por el usuario
+    package_count = PackageModel.query.filter_by(user_id=user_id, active=True).count()
 
     # Calcular el monto total del pago
     total_payment = (compensation_role + product_compensation) * production_count + (1000 * package_count)

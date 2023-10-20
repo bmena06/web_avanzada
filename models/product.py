@@ -12,17 +12,21 @@ class ProductModel(db.Model):
         self.price = price
 
     def save_to_db(self):
+        """Guarda el objeto ProductModel en la base de datos."""
         db.session.add(self)
         db.session.commit()
     
     def update_in_db(self):
+        """Actualiza el objeto ProductModel en la base de datos."""
         db.session.commit()
     
     def delete_from_db(self):
+        """Elimina el objeto ProductModel de la base de datos."""
         db.session.delete(self)
         db.session.commit()
 
     def json(self):
+        """Devuelve una representación JSON del objeto ProductModel."""
         return {
             'id': self.id,
             'name': self.name,
@@ -34,4 +38,4 @@ with app.app_context():
 
 class ProductSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name','price')
+        fields = ('id', 'name', 'price')
