@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_cors import CORS
 from auth.jwt import Security
 from api.auth.auth import auth_routes
 from api.rol.api_rol import rol_bp
@@ -8,9 +9,9 @@ from api.package.api_package import package_bp
 from api.production.api_production import production_bp
 from api.payment.api_payment import payment_bp
 from Config.db import app   
+CORS(app)
+cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:4200"}})
 
-# Crear una instancia de la aplicación Flask
-app = Flask(__name__)
 
 # Registrar rutas y puntos finales de la API
 app.register_blueprint(auth_routes, url_prefix='/api')
