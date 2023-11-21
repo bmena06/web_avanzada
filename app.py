@@ -46,7 +46,6 @@ def example():
         response = make_response('Response data')
     
     return add_cors_headers(response)
-
 """"
 # Middleware que verifica tokens y roles antes de cada solicitud
 @app.before_request
@@ -61,7 +60,7 @@ def token_middleware():
 
     # Obtener el token del encabezado de la solicitud
     token = request.headers.get("Authorization")
-
+    print(token)
     if token is None and current_route not in excluded_routes:
         return "No autorizado", 401
     else:

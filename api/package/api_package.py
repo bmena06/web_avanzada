@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from models.package import PackageModel
 from Config.db import db
+from models.user import UserModel
 
 # Crear un Blueprint para las rutas relacionadas con los paquetes
 package_bp = Blueprint('package', __name__)
@@ -105,5 +106,11 @@ def get_packages():
     Esta ruta permite recuperar una lista de todos los paquetes disponibles en la base de datos.
     Los datos de los paquetes se devuelven en formato JSON como una lista.
     """
-    packages = PackageModel.query.all()
-    return {"packages": [package.json() for package in packages]}, 200
+    packages = PackageModel.query.join(UserModel).add_columns(UserModel.name.label('user_name')).all()
+
+    package_list = []
+    for package, user_name in packages:
+        package_data = package.json()
+        package_data['user_name'] = user_name
+        package_list.append(package_data)
+    return {"packages": package_list}, 200

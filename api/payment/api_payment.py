@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from models.payment import PaymentModel  # Importa el modelo de pagos
 from Config.db import db
 from models.product_logic import create_production_and_package
+from models.user import UserModel
 
 # Crea un Blueprint para las rutas relacionadas con los pagos
 payment_bp = Blueprint('payment', __name__)
@@ -77,13 +78,20 @@ def delete_payment(id):
 @payment_bp.route('/payments', methods=['GET'])
 def get_payments():
     """
-    Ruta para obtener una lista de todos los pagos.
+    Ruta para obtener una lista de todos los pagos con detalles de usuario.
 
     Retorna:
-    - Una lista de todos los pagos en formato JSON y código de estado 200.
+    - Una lista de todos los pagos con detalles de usuario en formato JSON y código de estado 200.
 
-    Esta ruta permite recuperar una lista de todos los pagos disponibles en la base de datos.
-    Los datos de los pagos se devuelven en formato JSON como una lista.
+    Esta ruta permite recuperar una lista de todos los pagos disponibles en la base de datos con detalles de usuario.
+    Los datos de los pagos se devuelven en formato JSON como una lista, incluyendo el nombre del usuario.
     """
-    payments = PaymentModel.query.all()
-    return {"payments": [payment.json() for payment in payments]}, 200
+    payments = PaymentModel.query.join(UserModel).add_columns(UserModel.name.label('user_name')).all()
+
+    payment_list = []
+    for payment, user_name in payments:
+        payment_data = payment.json()
+        payment_data['user_name'] = user_name
+        payment_list.append(payment_data)
+
+    return {"payments": payment_list}, 200

@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from models.rol import RolModel
 from models.user import UserModel
 from Config.db import db
 
@@ -99,13 +100,21 @@ def delete_user(id):
 @user_bp.route('/users', methods=['GET'])
 def get_users():
     """
-    Ruta para obtener una lista de todos los usuarios.
+    Ruta para obtener una lista de todos los usuarios con detalles de rol.
 
     Retorna:
-    - Una lista de todos los usuarios en formato JSON y código de estado 200.
+    - Una lista de todos los usuarios con detalles de rol en formato JSON y código de estado 200.
 
-    Esta ruta permite recuperar una lista de todos los usuarios disponibles en la base de datos.
-    Los datos de los usuarios se devuelven en formato JSON como una lista.
+    Esta ruta permite recuperar una lista de todos los usuarios disponibles en la base de datos con detalles de rol.
+    Los datos de los usuarios se devuelven en formato JSON como una lista, incluyendo el nombre del rol.
     """
-    users = UserModel.query.all()
-    return {"usuarios": [user.json() for user in users]}, 200
+    users = UserModel.query.join(RolModel).add_columns(RolModel.name.label('rol_name')).all()
+
+    user_list = []
+    for user, rol_name in users:
+        user_data = user.json()
+        user_data['rol_name'] = rol_name
+        user_list.append(user_data)
+
+    return {"usuarios": user_list}, 200
+

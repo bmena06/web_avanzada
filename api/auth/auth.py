@@ -9,15 +9,12 @@ def login():
     data = request.get_json()
     name = data.get("name")
     password = data.get("password")
-
+    print("name: ", name,"password: ", password)
     # Llamar al método de AuthService para iniciar sesión del usuario
     response = auth_service.login_user(name, password)
-    
     if response:
         # Si el inicio de sesión es exitoso, agrega el token al diccionario de respuesta
         response_dict = response.get_json()
-        response_dict["token"] = "el_valor_del_token"  # Reemplaza 'el_valor_del_token' con el valor real del token
-
         # Devuelve el diccionario completo en formato JSON
         return jsonify(response_dict), 200
     else:

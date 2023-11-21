@@ -1,7 +1,9 @@
 from flask import Blueprint, request
+from models.product import ProductModel
 from models.production import ProductionModel
 from Config.db import db
 from models.product_logic import create_production_and_package
+from models.user import UserModel
 
 # Crea un Blueprint para las rutas relacionadas con producción
 production_bp = Blueprint('production', __name__)
@@ -101,13 +103,22 @@ def delete_production(id):
 @production_bp.route('/productions', methods=['GET'])
 def get_productions():
     """
-    Ruta para obtener una lista de todas las producciones.
+    Ruta para obtener una lista de todas las producciones con detalles de usuario y producto.
 
     Retorna:
-    - Una lista de todas las producciones en formato JSON y código de estado 200.
+    - Una lista de todas las producciones con detalles de usuario y producto en formato JSON y código de estado 200.
 
-    Esta ruta permite recuperar una lista de todas las producciones disponibles en la base de datos.
-    Los datos de las producciones se devuelven en formato JSON como una lista.
+    Esta ruta permite recuperar una lista de todas las producciones disponibles en la base de datos con detalles de usuario y producto.
+    Los datos de las producciones se devuelven en formato JSON como una lista, incluyendo el nombre del usuario y el nombre del producto.
     """
-    productions = ProductionModel.query.all()
-    return {"producciones": [produccion.json() for produccion in productions]}, 200
+    productions = ProductionModel.query.join(UserModel).join(ProductModel).add_columns(UserModel.name.label('user_name'), ProductModel.name.label('product_name')).all()
+
+    production_list = []
+    for production, user_name, product_name in productions:
+        production_data = production.json()
+        production_data['user_name'] = user_name
+        production_data['product_name'] = product_name
+        production_list.append(production_data)
+
+    return {"producciones": production_list}, 200
+
