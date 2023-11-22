@@ -1,6 +1,7 @@
-from flask import Blueprint, request
+from flask import Blueprint, app, request
+from flask_cors import CORS
 from models.product import ProductModel
-from Config.db import db
+
 
 # Crea un Blueprint para las rutas relacionadas con productos
 product_bp = Blueprint('product', __name__)

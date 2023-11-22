@@ -9,7 +9,7 @@ from api.production.api_production import production_bp
 from api.payment.api_payment import payment_bp
 from Config.db import app   
 from api.auth.auth import auth_routes
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, resources={r"/api/*": {"origins": "*", "supports_credentials": True, "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]}})
 
 
 # Registrar rutas y puntos finales de la API
@@ -32,22 +32,8 @@ def add_cors_headers(response):
     # Configurar los encabezados CORS adecuados
     response.headers['Access-Control-Allow-Origin'] = '*'  # Puedes especificar dominios permitidos en lugar de '*'
     response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS, DELETE, PUT'
-    response.headers['Access-Control-Allow-Headers'] = 'append, delete, entries, foreach, get, has, keys, set, values, Authorization'
-
+    response.headers['Access-Control-Allow-Headers'] = 'append, delete, entries, foreach, get, has, keys, set, values, Authorization, Content-Type'
     return response
-
-# Ruta de ejemplo que permite solicitudes CORS
-@app.route('/example', methods=['GET', 'POST', 'OPTIONS'])
-def example():
-    if request.method == 'OPTIONS':
-        response = make_response()
-    else:
-        # Tu lógica de manejo de la solicitud aquí
-        response = make_response('Response data')
-    
-    return add_cors_headers(response)
-""""
-# Middleware que verifica tokens y roles antes de cada solicitud
 @app.before_request
 def token_middleware():
     current_route = request.path
@@ -58,11 +44,15 @@ def token_middleware():
     # Rutas que no requieren rol de administrador
     no_admin_routes = ["/api/newproduction"]
 
+    # Permitir solicitudes OPTIONS sin verificar el token
+    if request.method == 'OPTIONS':
+        return None
+
     # Obtener el token del encabezado de la solicitud
     token = request.headers.get("Authorization")
     print(token)
     if token is None and current_route not in excluded_routes:
-        return "No autorizado", 401
+        return "No autorizado no hay token", 401
     else:
         token_data = Security.verify_token(request.headers)
 
@@ -75,7 +65,8 @@ def token_middleware():
             and current_route not in excluded_routes
         ):
             return "Se requiere permisos de administrador", 401
-"""
+
+        
 # Iniciar la aplicación si se ejecuta directamente
 if __name__ == "__main__":
     app.run(debug=True, port=5000, host='0.0.0.0')

@@ -19,16 +19,15 @@ class AuthService():
         """
 
         # Buscar al usuario por su correo electrónico
-        email = UserModel.query.filter_by(email=email).first()
-        password = UserModel.query.filter_by(password=password).first()
+        user = UserModel.query.filter_by(email=email, password=password).first()
 
         # Comprobar si se encontró un usuario y si la contraseña coincide
-        if email and password:
+        if user:
             # Generar un token JWT para el usuario
-            token = Security.generate_token(email)
+            token = Security.generate_token(user)
 
             # Devolver el token y los datos del usuario en formato JSON
-            return jsonify({"token": token, "user": email.json()})
+            return jsonify({"token": token, "user": user.json()})
         else:
             # Devolver False en caso de autenticación fallida
             return False

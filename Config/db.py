@@ -5,6 +5,7 @@ from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 #creamos las credenciales para conectarnos a la bd
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/web_avanzada'

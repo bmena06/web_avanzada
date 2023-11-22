@@ -23,7 +23,7 @@ class Security():
         payload = {
             "iat": datetime.datetime.now(tz=cls.timezone),  # Fecha de emisión
             "exp": datetime.datetime.now(tz=cls.timezone) + datetime.timedelta(days=1),  # Fecha de expiración
-            'name': authenticate_user.name,  # Nombre del usuario
+            'user': authenticate_user.name,  # Nombre del usuario
             'role': authenticate_user.id_rol,  # Rol del usuario
         }
 

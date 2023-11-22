@@ -1,4 +1,5 @@
 from Config.db import db, app, ma
+from models.rol import RolModel
 
 class UserModel(db.Model):
     __tablename__ = 'user'
@@ -51,14 +52,26 @@ class UserModel(db.Model):
         Returns:
             dict: Un diccionario que contiene los campos del usuario en formato JSON.
         """
+        role_name = self.get_role_name()  # Obtener el nombre del rol directamente
         return {
             'id': self.id,
             'name': self.name,
             'email': self.email,
             'password': self.password,
-            'id_rol': self.id_rol
+            'id_rol': self.id_rol,
+            'role_name': role_name
         }
+    
+    def get_role_name(self):
+        """
+        Obtiene el nombre del rol asociado al usuario.
 
+        Returns:
+            str: Nombre del rol o None si no hay un rol asociado.
+        """
+        role = RolModel.query.get(self.id_rol)
+        return role.name if role else None
+    
 with app.app_context():
     db.create_all()
 

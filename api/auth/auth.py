@@ -9,7 +9,6 @@ def login():
     data = request.get_json()
     name = data.get("name")
     password = data.get("password")
-    print("name: ", name,"password: ", password)
     # Llamar al método de AuthService para iniciar sesión del usuario
     response = auth_service.login_user(name, password)
     if response:
