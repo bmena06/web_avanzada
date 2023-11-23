@@ -5,26 +5,35 @@ from Config.db import db
 
 # Crea un Blueprint para las rutas relacionadas con usuarios
 user_bp = Blueprint('user', __name__)
-
 @user_bp.route('/newuser', methods=['POST'])
 def create_user():
-    """
-    Ruta para crear un nuevo usuario mediante una solicitud POST.
-
-    Parámetros:
-    - Se espera un cuerpo JSON con los datos del nuevo usuario.
-
-    Retorna:
-    - Un mensaje de éxito y código de estado 201 si el usuario se crea exitosamente.
-
-    Esta ruta permite crear un nuevo usuario proporcionando los datos del usuario en el cuerpo de la solicitud.
-    Los datos del usuario incluyen un nombre (name), un correo electrónico (email), una contraseña (password) y un ID de rol (id_rol).
-    Se responde con un mensaje de éxito y un código de estado 201 una vez que se crea el usuario en la base de datos.
-    """
     data = request.get_json()
-    new_user = UserModel(**data)
-    new_user.save_to_db()
-    return {"mensaje": "Usuario creado exitosamente"}, 201
+    rol_name = data.get('rol_name')
+
+    rol_id = get_rol_id_by_name(rol_name)
+
+    # Verifica si se encontró el rol
+    if rol_id is not None:
+        # Asigna el ID del rol al usuario
+        data['id_rol'] = rol_id
+        del data['rol_name']  # Elimina el nombre del rol del diccionario
+
+        # Crea y guarda el nuevo usuario
+        new_user = UserModel(**data)
+        new_user.save_to_db()
+        return {"mensaje": "Usuario creado exitosamente"}, 201
+    else:
+        return {"mensaje": f"No se encontró un rol con el nombre '{rol_name}'"}, 404
+
+
+def get_rol_id_by_name(rol_name):
+    rol = RolModel.query.filter_by(name=rol_name).first()
+    if rol:
+        return rol.id
+    else:
+        return None
+
+    
 
 @user_bp.route('/user/<int:id>', methods=['GET'])
 def get_user(id):
