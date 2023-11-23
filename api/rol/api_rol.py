@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, jsonify, request
 from models.rol import RolModel
 from Config.db import db
 
@@ -21,9 +21,19 @@ def create_rol():
     Se responde con un mensaje de éxito y un código de estado 201 una vez que se crea el rol en la base de datos.
     """
     data = request.get_json()
+    rol_name = data.get('name')
+
+    # Verificar si ya existe un rol con el mismo nombre
+    existing_rol = RolModel.query.filter_by(name=rol_name).first()
+    if existing_rol:
+        return jsonify({"mensaje": f"Ya existe un rol con el nombre '{rol_name}'"}), 400
+
+    # Crear y guardar el nuevo rol
     new_rol = RolModel(**data)
     new_rol.save_to_db()
+    
     return {"mensaje": "Rol creado exitosamente"}, 201
+
 
 @rol_bp.route('/rol/<int:id>', methods=['GET'])
 def get_rol(id):

@@ -42,7 +42,7 @@ def token_middleware():
     excluded_routes = ["/api/login"]
 
     # Rutas que no requieren rol de administrador
-    no_admin_routes = ["/api/newproduction"]
+    no_admin_routes = ["/api/newproduction","/api/productions"]
 
     # Permitir solicitudes OPTIONS sin verificar el token
     if request.method == 'OPTIONS':

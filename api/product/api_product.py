@@ -16,14 +16,23 @@ def create_product():
 
     Retorna:
     - Un mensaje de éxito y código de estado 201 si el producto se crea exitosamente.
+    - Un mensaje de error y código de estado 400 si el nombre del producto ya existe.
 
     Esta ruta permite crear un nuevo producto proporcionando los datos necesarios en el cuerpo de la solicitud.
     El producto se crea en la base de datos y se responde con un mensaje de éxito y un código de estado 201.
     """
     data = request.get_json()
+    
+    # Verifica si ya existe un producto con el mismo nombre
+    existing_product = ProductModel.query.filter_by(name=data['name']).first()
+    if existing_product:
+        return {"mensaje": "Ya existe un producto con este nombre"}, 400
+    
+    # Si no existe, crea el nuevo producto
     new_product = ProductModel(**data)
     new_product.save_to_db()
     return {"mensaje": "Producto creado exitosamente"}, 201
+
 
 @product_bp.route('/product/<int:id>', methods=['GET'])
 def get_product(id):

@@ -14,7 +14,7 @@ def create_production():
     Ruta para crear una nueva producción y paquete mediante una solicitud POST.
 
     Parámetros:
-    - Se espera un cuerpo JSON con los datos de usuario (user_id) y producto (product_id).
+    - Se espera un cuerpo JSON con los datos de usuario (user_id) y producto (product_name).
 
     Retorna:
     - Un mensaje de éxito y código de estado 201 si la producción y el paquete se crean exitosamente.
@@ -25,9 +25,29 @@ def create_production():
     """
     data = request.get_json()
     user_id = data.get('user_id')
-    product_id = data.get('product_id')
-    create_production_and_package(user_id, product_id)
-    return {"mensaje": "Producción creada exitosamente"}, 201
+    product_name = data.get('product_id')
+
+    # Busca el ID del producto por nombre
+    product_id = get_product_id_by_name(product_name)
+
+    # Verifica si se encontró el producto
+    if product_id is not None:
+        # Si se encontró el producto, crea la producción y el paquete
+        create_production_and_package(user_id, product_id)
+        return {"mensaje": "Producción creada exitosamente"}, 201
+    else:
+        # Si no se encontró el producto, responde con un mensaje de error
+        return {"mensaje": f"No se encontró un producto con el nombre '{product_name}'"}, 404
+
+
+def get_product_id_by_name(product_name):
+
+    product = ProductModel.query.filter_by(name=product_name).first()
+
+    if product:
+        return product.id
+    else:
+        return None
 
 @production_bp.route('/production/<int:id>', methods=['GET'])
 def get_production(id):
