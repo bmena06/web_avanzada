@@ -122,16 +122,16 @@ def delete_production(id):
 
 @production_bp.route('/productions', methods=['GET'])
 def get_productions():
-    """
-    Ruta para obtener una lista de todas las producciones con detalles de usuario y producto.
+    
+    user_id = request.args.get('user_id')
+    if user_id!= '1':
+        # Si se proporciona un user_id, obtenemos las producciones para ese usuario
+        productions = ProductionModel.query.filter_by(user_id=user_id).join(UserModel).join(ProductModel).add_columns(UserModel.name.label('user_name'), ProductModel.name.label('product_name')).all()
+    else:
+        # Si no se proporciona un user_id, obtenemos todas las producciones
+        print(user_id)
+        productions = ProductionModel.query.join(UserModel).join(ProductModel).add_columns(UserModel.name.label('user_name'), ProductModel.name.label('product_name')).all()
 
-    Retorna:
-    - Una lista de todas las producciones con detalles de usuario y producto en formato JSON y código de estado 200.
-
-    Esta ruta permite recuperar una lista de todas las producciones disponibles en la base de datos con detalles de usuario y producto.
-    Los datos de las producciones se devuelven en formato JSON como una lista, incluyendo el nombre del usuario y el nombre del producto.
-    """
-    productions = ProductionModel.query.join(UserModel).join(ProductModel).add_columns(UserModel.name.label('user_name'), ProductModel.name.label('product_name')).all()
 
     production_list = []
     for production, user_name, product_name in productions:

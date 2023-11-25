@@ -55,7 +55,6 @@ def token_middleware():
         return "No autorizado no hay token", 401
     else:
         token_data = Security.verify_token(request.headers)
-
         if current_route not in excluded_routes and not token_data['token_valid']:
             return "Token inválido", 401
 
