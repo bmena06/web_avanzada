@@ -1,4 +1,4 @@
-# Footwear API
+# SHOE SHOP API
 ## Description
 FLASK API FOR A SHOE SHOP
 ## Installation
